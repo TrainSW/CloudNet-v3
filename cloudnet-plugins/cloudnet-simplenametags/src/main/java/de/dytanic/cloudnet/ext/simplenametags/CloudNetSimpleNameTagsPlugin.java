@@ -48,6 +48,17 @@ public final class CloudNetSimpleNameTagsPlugin extends JavaPlugin {
 
   @Override
   public void onEnable() {
+    Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, new Runnable() {
+      @Override
+      public void run() {
+        Bukkit.getOnlinePlayers().forEach(all -> {
+          IPermissionUser playerPermissionUser = CloudNetDriver.getInstance().getPermissionManagement()
+            .getUser(all.getUniqueId());
+          IPermissionGroup group = CloudNetDriver.getInstance().getPermissionManagement().getHighestPermissionGroup(playerPermissionUser);
+          all.setPlayerListName(group.getPrefix().replace("&", "§") + all.getName());
+        });
+      }
+    }, 0L, 20L);
     Listener listener = new CloudNetSimpleNameTagsListener(this);
 
     this.getServer().getPluginManager().registerEvents(listener, this);
